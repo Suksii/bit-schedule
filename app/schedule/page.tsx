@@ -15,6 +15,7 @@ import {
 } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import PrintButton from "./PrintButton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -32,8 +33,15 @@ export default async function SchedulePage({
 }) {
   const params = await searchParams;
   const today = new Date();
-  const defaultWeek = toISODate(getWeekStart(today));
-  const weekStart = params.week || defaultWeek;
+  const currentWeek = toISODate(getWeekStart(today));
+  const nextAllowed = addWeeks(currentWeek, 1);
+
+  const requested = params.week;
+  if (requested && requested !== currentWeek && requested !== nextAllowed) {
+    redirect(`/schedule?week=${currentWeek}`);
+  }
+
+  const weekStart = requested || currentWeek;
 
   const [data, allEmployees] = await Promise.all([
     getScheduleWithShifts(weekStart),
@@ -41,8 +49,9 @@ export default async function SchedulePage({
   ]);
 
   const weekDates = getWeekDates(weekStart);
-  const prevWeek = addWeeks(weekStart, -1);
   const nextWeek = addWeeks(weekStart, 1);
+  const isCurrentWeek = weekStart === currentWeek;
+  const isNextWeek = weekStart === nextAllowed;
   const holidayDays: number[] = data?.holidayDays ?? [];
 
   const allShiftNames = [
@@ -154,15 +163,19 @@ export default async function SchedulePage({
       {/* ── SCREEN week navigation ─────────────────────── */}
       <div className={`${THEME.subheader.bg} px-4 py-2 print:hidden`}>
         <div className="max-w-6xl mx-auto flex items-center gap-4">
-          <Link href={`/schedule?week=${prevWeek}`} className={THEME.subheader.navBtn}>
-            <ChevronLeft size={16} /> Prethodna
-          </Link>
+          {!isCurrentWeek && (
+            <Link href={`/schedule?week=${currentWeek}`} className={THEME.subheader.navBtn}>
+              <ChevronLeft size={16} /> Prethodna
+            </Link>
+          )}
           <span className={THEME.subheader.label}>
             {formatDate(weekStart)} – {formatDate(getWeekEnd(weekStart))}
           </span>
-          <Link href={`/schedule?week=${nextWeek}`} className={THEME.subheader.navBtn}>
-            Sljedeća <ChevronRight size={16} />
-          </Link>
+          {!isNextWeek && (
+            <Link href={`/schedule?week=${nextWeek}`} className={THEME.subheader.navBtn}>
+              Sljedeća <ChevronRight size={16} />
+            </Link>
+          )}
         </div>
       </div>
 
@@ -237,21 +250,45 @@ export default async function SchedulePage({
           </table>
         </div>
 
-        {/* ── PRINT footer: employee contact list ──────── */}
+        {/* ── Employee contact list (screen) ──────── */}
         {allEmployees.some((e) => e.phone || e.email) && (
-          <div className="hidden print:block mt-10">
-            <table className="mx-auto text-xs">
-              <tbody>
+          <>
+            <div className="mt-8 print:hidden">
+              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Kontakti</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {allEmployees.filter((e) => e.phone || e.email).map((emp) => (
-                  <tr key={emp.id}>
-                    <td className="pr-4 py-0.5 text-right font-semibold">{emp.name}</td>
-                    <td className="pr-6 py-0.5 tabular-nums">{emp.phone ?? ""}</td>
-                    <td className="py-0.5 text-blue-700">{emp.email ?? ""}</td>
-                  </tr>
+                  <div key={emp.id} className="bg-white rounded-lg border border-gray-200 px-4 py-3 flex flex-col gap-1">
+                    <span className="font-semibold text-gray-800 text-sm">{emp.name}</span>
+                    {emp.phone && (
+                      <a href={`tel:${emp.phone}`} className="text-xs text-gray-500 hover:text-gray-700 tabular-nums">
+                        {emp.phone}
+                      </a>
+                    )}
+                    {emp.email && (
+                      <a href={`mailto:${emp.email}`} className="text-xs text-blue-600 hover:underline truncate">
+                        {emp.email}
+                      </a>
+                    )}
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </div>
+
+            {/* ── PRINT footer ──────── */}
+            <div className="hidden print:block mt-10">
+              <table className="mx-auto text-xs">
+                <tbody>
+                  {allEmployees.filter((e) => e.phone || e.email).map((emp) => (
+                    <tr key={emp.id}>
+                      <td className="pr-4 py-0.5 text-right font-semibold">{emp.name}</td>
+                      <td className="pr-6 py-0.5 tabular-nums">{emp.phone ?? ""}</td>
+                      <td className="py-0.5 text-blue-700">{emp.email ?? ""}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </main>
     </div>

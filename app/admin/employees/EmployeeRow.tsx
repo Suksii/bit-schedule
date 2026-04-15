@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Trash2, Pencil, Check, X } from "lucide-react";
 import { updateEmployee, deleteEmployee } from "@/app/actions/schedule";
+import Input from "@/app/components/Input";
 
 type Employee = {
   id: number;
@@ -30,27 +31,11 @@ export default function EmployeeRow({ emp }: { emp: Employee }) {
 
   if (editing) {
     return (
-      <li className="px-6 py-3 bg-blue-50">
+      <li className="px-6 py-3 bg-slate-50">
         <form action={handleSave} className="flex items-center gap-2 flex-wrap">
-          <input
-            name="name"
-            defaultValue={emp.name}
-            required
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            name="phone"
-            defaultValue={emp.phone ?? ""}
-            placeholder="Telefon"
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            name="email"
-            type="email"
-            defaultValue={emp.email ?? ""}
-            placeholder="Email"
-            className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <Input name="name" defaultValue={emp.name} required placeholder="Ime i prezime" />
+          <Input name="phone" defaultValue={emp.phone ?? ""} placeholder="Telefon" />
+          <Input name="email" type="email" defaultValue={emp.email ?? ""} placeholder="Email" />
           <button
             type="submit"
             disabled={pending}

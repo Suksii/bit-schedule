@@ -126,6 +126,17 @@ export async function assignSlot(
   revalidatePath("/schedule");
 }
 
+export async function resetSchedule(weekStart: string) {
+  const schedule = await db
+    .select()
+    .from(schedules)
+    .where(eq(schedules.weekStart, weekStart));
+  if (!schedule[0]) return;
+  await db.delete(shifts).where(eq(shifts.scheduleId, schedule[0].id));
+  revalidatePath("/admin");
+  revalidatePath("/schedule");
+}
+
 export async function removeShift(shiftId: number) {
   await db.delete(shifts).where(eq(shifts.id, shiftId));
   revalidatePath("/admin");

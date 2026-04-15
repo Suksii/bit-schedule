@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { THEME } from "@/lib/theme";
 import EmployeeRow from "./EmployeeRow";
+import Input from "@/app/components/Input";
 
 export default async function EmployeesPage() {
   const allEmployees = await getEmployees();
@@ -41,19 +42,18 @@ export default async function EmployeesPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 flex flex-col gap-6">
-        {/* Add employee form */}
+        {/* Add employee form */} 
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Dodaj zaposlenika</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Dodaj zaposlenog</h2>
           <form action={async (fd) => { "use server"; await addEmployee(fd); }} className="grid grid-cols-2 gap-3">
-            <input name="name" type="text" placeholder="Ime i prezime *" required
-              className="col-span-2 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <input name="phone" type="text" placeholder="Telefon (opciono)"
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            <input name="email" type="email" placeholder="Email (opciono)"
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <div className="col-span-2">
+              <Input name="name" type="text" placeholder="Unesi ime i prezime..." label="Ime i prezime *" required />
+            </div>
+            <Input name="phone" type="text" placeholder="Unesi telefon..." label="Telefon" />
+            <Input name="email" type="email" placeholder="Unesi email..." label="Email" />
             <button type="submit"
-              className="bg-blue-600 text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
-              Dodaj
+              className="col-span-2 bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-700 transition-colors">
+              Dodaj zaposlenog
             </button>
           </form>
         </div>

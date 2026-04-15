@@ -2,7 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useOptimistic, useTransition, useState } from "react";
-import { assignSlot, removeShift, toggleHoliday } from "@/app/actions/schedule";
+import {
+  assignSlot,
+  removeShift,
+  toggleHoliday,
+  resetSchedule,
+} from "@/app/actions/schedule";
 import {
   SHIFT_SLOTS,
   DAYS,
@@ -11,7 +16,7 @@ import {
   getDisplayName,
 } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
-import { X, Check } from "lucide-react";
+import { X, Check, RotateCcw } from "lucide-react";
 
 type Employee = {
   id: number;
@@ -32,7 +37,8 @@ type ShiftAssignment = {
 
 type OptimisticAction =
   | { type: "add"; assignment: ShiftAssignment }
-  | { type: "remove"; shiftId: number };
+  | { type: "remove"; shiftId: number }
+  | { type: "reset" };
 
 type Props = {
   weekStart: string;
@@ -75,6 +81,9 @@ export default function ScheduleGrid({
       }
       if (action.type === "remove") {
         return state.filter((a) => a.id !== action.shiftId);
+      }
+      if (action.type === "reset") {
+        return [];
       }
       return state;
     },
@@ -159,6 +168,14 @@ export default function ScheduleGrid({
     });
   }
 
+  function handleReset() {
+    startTransition(async () => {
+      dispatchOptimistic({ type: "reset" });
+      await resetSchedule(weekStart);
+      router.refresh();
+    });
+  }
+
   function handleToggleHoliday(day: number) {
     startTransition(async () => {
       await toggleHoliday(weekStart, day);
@@ -215,7 +232,9 @@ export default function ScheduleGrid({
                     >
                       <span
                         className={`text-xs font-medium flex-1 ${
-                          holiday ? THEME.chip.holidayText : THEME.chip.normalText
+                          holiday
+                            ? THEME.chip.holidayText
+                            : THEME.chip.normalText
                         }`}
                       >
                         {getDisplayName(a.employeeName, allEmployeeNames)}
@@ -243,7 +262,10 @@ export default function ScheduleGrid({
   return (
     <div onClick={() => setSelectedEmp(null)}>
       {/* Employee palette */}
-      <div className="mb-4" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="mb-4 flex items-start justify-between gap-4"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex flex-wrap gap-2">
           {employees.map((emp) => {
             const isSelected = selectedEmp?.id === emp.id;
@@ -258,16 +280,32 @@ export default function ScheduleGrid({
                 }`}
               >
                 {emp.name}
-                <span className={`text-xs ml-1 ${isSelected ? "text-slate-300" : "text-slate-300"}`}>
-                  {optimisticAssignments.filter((a) => a.employeeId === emp.id).length}
+                <span
+                  className={`text-xs ml-1 ${isSelected ? "text-slate-300" : "text-slate-300"}`}
+                >
+                  {
+                    optimisticAssignments.filter((a) => a.employeeId === emp.id)
+                      .length
+                  }
                 </span>
                 {isSelected && (
-                  <Check size={13} className={`ml-1 ${THEME.palette.checkIcon}`} />
+                  <Check
+                    size={13}
+                    className={`ml-1 ${THEME.palette.checkIcon}`}
+                  />
                 )}
               </div>
             );
           })}
         </div>
+        <button
+          onClick={handleReset}
+          disabled={optimisticAssignments.length === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border transition-colors shrink-0 disabled:opacity-40 disabled:cursor-not-allowed border-red-200 text-red-500 hover:bg-red-50 hover:border-red-400 disabled:hover:bg-transparent disabled:hover:border-red-200"
+          title="Resetuj raspored"
+        >
+          <RotateCcw size={14} /> Reset
+        </button>
       </div>
 
       {/* Schedule grid */}
@@ -288,7 +326,11 @@ export default function ScheduleGrid({
                   >
                     <button
                       onClick={() => handleToggleHoliday(DAY_ORDER[i])}
-                      title={holiday ? "Ukloni oznaku praznika" : "Označi kao praznik"}
+                      title={
+                        holiday
+                          ? "Ukloni oznaku praznika"
+                          : "Označi kao praznik"
+                      }
                       className={`w-full rounded py-0.5 transition-colors ${
                         holiday
                           ? `${THEME.day.holiday} hover:text-red-300`
