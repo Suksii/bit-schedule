@@ -32,6 +32,7 @@ export const SHIFT_SLOTS = [
   },
   { key: "obuka", label: "OBUKA", startTime: null, endTime: null },
   { key: "mob_rez", label: "MOB. REŽ", startTime: null, endTime: null },
+  { key: "godisnji", label: "GOD. ODMOR", startTime: null, endTime: null },
 ] as const;
 
 export type SlotKey = (typeof SHIFT_SLOTS)[number]["key"];

@@ -258,6 +258,9 @@ export default function ScheduleGrid({
                 }`}
               >
                 {emp.name}
+                <span className={`text-xs ml-1 ${isSelected ? "text-slate-300" : "text-slate-300"}`}>
+                  {optimisticAssignments.filter((a) => a.employeeId === emp.id).length}
+                </span>
                 {isSelected && (
                   <Check size={13} className={`ml-1 ${THEME.palette.checkIcon}`} />
                 )}
