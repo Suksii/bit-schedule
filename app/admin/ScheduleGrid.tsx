@@ -48,9 +48,9 @@ type Props = {
   holidayDays: number[];
 };
 
-const SHIFT_SLOT_KEYS = new Set(["jutarnja", "popodnevna", "nocna"]);
-const normalSlots = SHIFT_SLOTS.filter((s) => SHIFT_SLOT_KEYS.has(s.key));
-const specialSlots = SHIFT_SLOTS.filter((s) => !SHIFT_SLOT_KEYS.has(s.key));
+const normalSlots = SHIFT_SLOTS.filter((s) => ["jutarnja", "popodnevna", "nocna"].includes(s.key));
+const specialSlots = SHIFT_SLOTS.filter((s) => ["obuka", "mob_rez"].includes(s.key));
+const leaveSlots = SHIFT_SLOTS.filter((s) => ["godisnji"].includes(s.key));
 
 export default function ScheduleGrid({
   weekStart,
@@ -298,10 +298,12 @@ export default function ScheduleGrid({
             );
           })}
         </div>
+      </div>
+      <div className="w-full flex justify-end">
         <button
           onClick={handleReset}
           disabled={optimisticAssignments.length === 0}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md border transition-colors shrink-0 disabled:opacity-40 disabled:cursor-not-allowed border-red-200 text-red-500 hover:bg-red-50 hover:border-red-400 disabled:hover:bg-transparent disabled:hover:border-red-200"
+          className="flex items-center gap-1.5 px-3 py-1.5 mb-4 text-sm rounded-md border transition-colors shrink-0 disabled:opacity-40 disabled:cursor-not-allowed border-red-200 text-red-500 hover:bg-red-50 hover:border-red-400 disabled:hover:bg-transparent disabled:hover:border-red-200"
           title="Resetuj raspored"
         >
           <RotateCcw size={14} /> Reset
@@ -359,6 +361,12 @@ export default function ScheduleGrid({
             </tr>
 
             {renderRows(specialSlots)}
+
+            <tr aria-hidden="true">
+              <td colSpan={8} className="h-3 border-0 p-0" />
+            </tr>
+
+            {renderRows(leaveSlots)}
           </tbody>
         </table>
       </div>

@@ -13,6 +13,7 @@ import {
 import { THEME } from "@/lib/theme";
 import Link from "next/link";
 import ScheduleGrid from "./ScheduleGrid";
+import TopBar from "@/app/components/TopBar";
 import { ChevronLeft, ChevronRight, ArrowRight, ExternalLink } from "lucide-react";
 
 export default async function AdminPage({
@@ -47,35 +48,18 @@ export default async function AdminPage({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ── Top bar ── */}
-      <header className={`${THEME.topbar.bg} ${THEME.topbar.text} px-4`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between h-14">
-          <div className="flex items-center gap-3">
-            <div className={THEME.topbar.logoWrap}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/rtcg-logo.png" alt="RTCG" className="h-7 object-contain" />
-            </div>
-            <span className="font-bold text-sm tracking-wide">BROADCAST IT SISTEMI</span>
-          </div>
-          <nav className="flex items-center gap-1">
-            <Link href="/admin" className={THEME.topbar.navLinkActive}>
-              Raspored
-            </Link>
-            <Link href="/admin/employees" className={THEME.topbar.navLink}>
-              Zaposleni
-            </Link>
-            <Link href="/schedule" target="_blank" className={`${THEME.topbar.navLink} flex items-center gap-1`}>
-              Pregled <ExternalLink size={13} />
-            </Link>
-            <div className={`${THEME.topbar.divider} mx-2`} />
-            <form action={logout}>
-              <button type="submit" className={THEME.topbar.navLink}>
-                Odjavi se
-              </button>
-            </form>
-          </nav>
-        </div>
-      </header>
+      <TopBar
+        navItems={[
+          { label: "Raspored", href: "/admin", active: true },
+          { label: "Zaposleni", href: "/admin/employees" },
+          { label: "Pregled", href: "/schedule", target: "_blank", icon: <ExternalLink size={13} /> },
+        ]}
+        right={
+          <form action={logout}>
+            <button type="submit" className={THEME.topbar.navLink}>Odjavi se</button>
+          </form>
+        }
+      />
 
       {/* ── Week navigation sub-header ── */}
       <div className={`${THEME.subheader.bg} px-4 py-2`}>

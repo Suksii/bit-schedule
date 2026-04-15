@@ -1,45 +1,28 @@
 import { getEmployees, addEmployee } from "@/app/actions/schedule";
 import { logout } from "@/app/actions/auth";
-import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { THEME } from "@/lib/theme";
 import EmployeeRow from "./EmployeeRow";
 import Input from "@/app/components/Input";
+import TopBar from "@/app/components/TopBar";
 
 export default async function EmployeesPage() {
   const allEmployees = await getEmployees();
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ── Top bar ── */}
-      <header className={`${THEME.topbar.bg} ${THEME.topbar.text} px-4`}>
-        <div className="max-w-4xl mx-auto flex items-center justify-between h-14">
-          <div className="flex items-center gap-3">
-            <div className={THEME.topbar.logoWrap}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/rtcg-logo.png" alt="RTCG" className="h-7 object-contain" />
-            </div>
-            <span className="font-bold text-sm tracking-wide">BROADCAST IT SISTEMI</span>
-          </div>
-          <nav className="flex items-center gap-1">
-            <Link href="/admin" className={THEME.topbar.navLink}>
-              Raspored
-            </Link>
-            <Link href="/admin/employees" className={THEME.topbar.navLinkActive}>
-              Zaposleni
-            </Link>
-            <Link href="/schedule" target="_blank" className={`${THEME.topbar.navLink} flex items-center gap-1`}>
-              Pregled <ExternalLink size={13} />
-            </Link>
-            <div className={`${THEME.topbar.divider} mx-2`} />
-            <form action={logout}>
-              <button type="submit" className={THEME.topbar.navLink}>
-                Odjavi se
-              </button>
-            </form>
-          </nav>
-        </div>
-      </header>
+      <TopBar
+        navItems={[
+          { label: "Raspored", href: "/admin" },
+          { label: "Zaposleni", href: "/admin/employees", active: true },
+          { label: "Pregled", href: "/schedule", target: "_blank", icon: <ExternalLink size={13} /> },
+        ]}
+        right={
+          <form action={logout}>
+            <button type="submit" className={THEME.topbar.navLink}>Odjavi se</button>
+          </form>
+        }
+      />
 
       <main className="max-w-4xl mx-auto px-4 py-6 flex flex-col gap-6">
         {/* Add employee form */} 

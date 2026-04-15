@@ -18,6 +18,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import PrintButton from "./PrintButton";
 import AutoRefresh from "./AutoRefresh";
+import TopBar from "@/app/components/TopBar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const normalSlots = SHIFT_SLOTS.filter((s) =>
@@ -25,6 +26,9 @@ const normalSlots = SHIFT_SLOTS.filter((s) =>
 );
 const specialSlots = SHIFT_SLOTS.filter((s) =>
   ["obuka", "mob_rez"].includes(s.key),
+);
+const leaveSlots = SHIFT_SLOTS.filter((s) =>
+  ["godisnji"].includes(s.key),
 );
 
 export default async function SchedulePage({
@@ -148,19 +152,7 @@ export default async function SchedulePage({
     <div className="min-h-screen bg-gray-50 print:bg-white">
       <AutoRefresh />
 
-      {/* ── SCREEN top bar ────────────────────────────── */}
-      <header className={`${THEME.topbar.bg} ${THEME.topbar.text} px-4 print:hidden`}>
-        <div className="max-w-6xl mx-auto flex items-center justify-between h-14">
-          <div className="flex items-center gap-3">
-            <div className={THEME.topbar.logoWrap}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/rtcg-logo.png" alt="RTCG" className="h-7 object-contain" />
-            </div>
-            <span className="font-bold text-sm tracking-wide">BROADCAST IT SISTEMI</span>
-          </div>
-          <PrintButton />
-        </div>
-      </header>
+      <TopBar right={<PrintButton />} />
 
       {/* ── SCREEN week navigation ─────────────────────── */}
       <div className={`${THEME.subheader.bg} px-4 py-2 print:hidden`}>
@@ -248,6 +240,12 @@ export default async function SchedulePage({
               </tr>
 
               {renderRows(specialSlots)}
+
+              <tr aria-hidden="true">
+                <td colSpan={8} className="h-3 border-0 p-0 print:h-2" />
+              </tr>
+
+              {renderRows(leaveSlots)}
             </tbody>
           </table>
         </div>
