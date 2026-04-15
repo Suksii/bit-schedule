@@ -17,6 +17,7 @@ import { THEME } from "@/lib/theme";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import PrintButton from "./PrintButton";
+import AutoRefresh from "./AutoRefresh";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const normalSlots = SHIFT_SLOTS.filter((s) =>
@@ -145,6 +146,7 @@ export default async function SchedulePage({
 
   return (
     <div className="min-h-screen bg-gray-50 print:bg-white">
+      <AutoRefresh />
 
       {/* ── SCREEN top bar ────────────────────────────── */}
       <header className={`${THEME.topbar.bg} ${THEME.topbar.text} px-4 print:hidden`}>
