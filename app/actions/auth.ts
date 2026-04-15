@@ -8,7 +8,7 @@ export async function login(formData: FormData) {
   const password = formData.get("password") as string;
 
   const validUsername = username === process.env.ADMIN_USERNAME;
-  const validPassword = password === process.env.ADMIN_PASSWORD_HASH;
+  const validPassword = password === process.env.ADMIN_PASSWORD;
 
   if (!validUsername || !validPassword) {
     return { error: "Pogrešno korisničko ime ili lozinka." };
