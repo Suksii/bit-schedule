@@ -33,9 +33,23 @@ export default function EmployeeRow({ emp }: { emp: Employee }) {
     return (
       <li className="px-6 py-3 bg-slate-50">
         <form action={handleSave} className="flex items-center gap-2 flex-wrap">
-          <Input name="name" defaultValue={emp.name} required placeholder="Ime i prezime" />
-          <Input name="phone" defaultValue={emp.phone ?? ""} placeholder="Telefon" />
-          <Input name="email" type="email" defaultValue={emp.email ?? ""} placeholder="Email" />
+          <Input
+            name="name"
+            defaultValue={emp.name}
+            required
+            placeholder="Ime i prezime"
+          />
+          <Input
+            name="phone"
+            defaultValue={emp.phone ?? ""}
+            placeholder="Telefon"
+          />
+          <Input
+            name="email"
+            type="email"
+            defaultValue={emp.email ?? ""}
+            placeholder="Email"
+          />
           <button
             type="submit"
             disabled={pending}
@@ -62,15 +76,18 @@ export default function EmployeeRow({ emp }: { emp: Employee }) {
       <div>
         <span className="font-medium text-gray-800">{emp.name}</span>
         <div className="flex gap-4 mt-0.5">
-          {emp.phone && <span className="text-xs text-gray-400">{emp.phone}</span>}
-          {emp.email && <span className="text-xs text-gray-400">{emp.email}</span>}
+          {emp.phone && (
+            <span className="text-xs text-gray-400">{emp.phone}</span>
+          )}
+          {emp.email && (
+            <span className="text-xs text-gray-400">{emp.email}</span>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-3">
         <button
           onClick={() => setEditing(true)}
           className="text-gray-400 hover:text-blue-600 transition-colors"
-          title="Uredi zaposlenika"
         >
           <Pencil size={15} />
         </button>
@@ -78,7 +95,6 @@ export default function EmployeeRow({ emp }: { emp: Employee }) {
           onClick={handleDelete}
           disabled={pending}
           className="text-red-400 hover:text-red-600 transition-colors"
-          title="Ukloni zaposlenika"
         >
           <Trash2 size={16} />
         </button>
